@@ -1,6 +1,10 @@
 GSCam [![Build Status](https://travis-ci.org/ros-drivers/gscam.svg?branch=master)](https://travis-ci.org/ros-drivers/gscam)
 ===========================================================================================================================
 
+```bash
+sudo apt-get install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
+```
+
 This is a ROS package originally developed by the [Brown Robotics
 Lab](http://robotics.cs.brown.edu/) for broadcasting any
 [GStreamer](http://gstreamer.freedesktop.org/)-based video stream via the

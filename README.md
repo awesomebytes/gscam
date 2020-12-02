@@ -3,6 +3,8 @@ GSCam [![Build Status](https://travis-ci.org/ros-drivers/gscam.svg?branch=master
 
 ```bash
 sudo apt-get install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
+sudo apt-get install ros-melodic-image-transport ros-melodic-compressed-image-transport ros-melodic-camera-calibration-parsers ros-melodic-camera-info-manager
+catkin_make -DCMAKE_BUILD_TYPE=Release
 ```
 
 This is a ROS package originally developed by the [Brown Robotics

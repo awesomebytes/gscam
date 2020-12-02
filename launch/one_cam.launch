@@ -1,15 +1,19 @@
 <launch>
 
     <arg name="sync_sink" default="true"/>
-    <arg name="width" default="640"/>
-    <arg name="height" default="360"/>
-    <arg name="fps" default="30"/>
+    <arg name="width" default="960"/>
+    <arg name="height" default="540"/>
+    <!--
+    <arg name="width" default="1920"/>
+    <arg name="height" default="1080"/>
+    -->
+    <arg name="fps" default="25"/>
 
     <!-- Start the GSCAM node -->
     <node pkg="gscam" type="gscam" name="csi_cam_narrow" output="screen">
         <param name="camera_name" value="csi_cam_narrow"/>
         <param name="gscam_config"
-               value="nvarguscamerasrc ! video/x-raw(memory:NVMM), width=(int)$(arg width), height=(int)$(arg height), format=(string)NV12, framerate=(fraction)$(arg fps)/1 ! nvvidconv ! video/x-raw, format=(string)BGRx ! videoconvert ! video/x-raw, format=(string)BGR"/>
+               value="nvarguscamerasrc wbmode=1 ispdigitalgainrange='1 8'  aeantibanding=3 ! video/x-raw(memory:NVMM), width=(int)$(arg width), height=(int)$(arg height), format=(string)NV12, framerate=(fraction)$(arg fps)/1 ! nvvidconv ! video/x-raw, format=(string)BGRx ! videoconvert ! videorate ! video/x-raw, framerate=$(arg fps)/1 ! video/x-raw, format=(string)BGR"/>
         <!-- <param name="camera_info_url" value="package://gscam/calibration/narrow.yaml"/> -->
         <param name="frame_id" value="narrow_frame"/>
         <remap from="camera/image_raw" to="csi_cam_narrow/image_raw"/>

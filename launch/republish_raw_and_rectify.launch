@@ -1,0 +1,36 @@
+<launch>
+    <arg name="nodelet_manager_name" default="rectifier_nodelet" />
+    <arg name="respawn" default="false" />
+
+    
+    <node pkg="image_transport" name="front_cam_compressed_to_raw" type="republish"
+        args="in:=/hullbot/front_cam/image_raw raw out:=/hullbot/front_cam/image_raw" />
+
+    <group ns="hullbot/front_cam" >
+        <arg     if="$(arg respawn)" name="bond" value="" />
+        <arg unless="$(arg respawn)" name="bond" value="--no-bond" />
+
+        <node pkg="nodelet" type="nodelet" name="$(arg nodelet_manager_name)"  args="manager"/>
+
+        <!-- Debayered images (publishes image_mono) -->
+        <node pkg="nodelet" type="nodelet" name="debayer"
+                args="load image_proc/debayer $(arg nodelet_manager_name) $(arg bond)"
+            respawn="$(arg respawn)" >
+        </node>
+
+        <!-- Monochrome rectified image -->
+        <node pkg="nodelet" type="nodelet" name="rectify_mono"
+                args="load image_proc/rectify $(arg nodelet_manager_name) $(arg bond)"
+            respawn="$(arg respawn)" >
+        </node>
+
+        <!-- Color rectified image -->
+        <node pkg="nodelet" type="nodelet" name="rectify_color"
+                args="load image_proc/rectify $(arg nodelet_manager_name) $(arg bond)"
+            respawn="$(arg respawn)">
+            <remap from="image_mono" to="image_color" />
+            <remap from="image_rect" to="image_rect_color" />
+        </node>  
+    </group>
+
+</launch>

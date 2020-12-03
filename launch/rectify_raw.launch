@@ -1,0 +1,7 @@
+<launch>
+    <!-- Set group namespace, equivalent to doing ROS_NAMESPACE=hullbot/front_cam in the commandline -->
+    <group ns="hullbot/front_cam">
+        <node pkg="image_proc" name="rectify_front_cam_raw" type="image_proc" />
+    </group>
+
+</launch>

@@ -1,0 +1,6 @@
+<launch>
+
+    <node pkg="image_transport" name="front_cam_compressed_to_raw" type="republish"
+        args="in:=/hullbot/front_cam/image_raw raw out:=/hullbot/front_cam/image_raw" />
+
+</launch>

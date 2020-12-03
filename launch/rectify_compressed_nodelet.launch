@@ -1,0 +1,45 @@
+<launch>
+    <arg name="nodelet_manager_name" default="rectifier_nodelet" />
+    <arg name="respawn" default="false" />
+
+    <group ns="hullbot/front_cam" >
+        <arg     if="$(arg respawn)" name="bond" value="" />
+        <arg unless="$(arg respawn)" name="bond" value="--no-bond" />
+
+        <node pkg="nodelet" type="nodelet" name="$(arg nodelet_manager_name)"  args="manager"/>
+
+        <!-- Debayered images (publishes image_mono) -->
+        <node pkg="nodelet" type="nodelet" name="debayer"
+                args="load image_proc/debayer $(arg nodelet_manager_name) $(arg bond)"
+            respawn="$(arg respawn)" >
+            <param name="image_transport" value="compressed" />
+        </node>
+
+        <!-- Monochrome rectified image -->
+        <node pkg="nodelet" type="nodelet" name="rectify_mono"
+                args="load image_proc/rectify $(arg nodelet_manager_name) $(arg bond)"
+            respawn="$(arg respawn)" >
+            <param name="image_transport" value="compressed" />
+        </node>
+
+        <!-- Color rectified image -->
+        <node pkg="nodelet" type="nodelet" name="rectify_color"
+                args="load image_proc/rectify $(arg nodelet_manager_name) $(arg bond)"
+            respawn="$(arg respawn)">
+            <remap from="image_mono" to="image_color" />
+            <remap from="image_rect" to="image_rect_color" />
+            <param name="image_transport" value="compressed" />
+        </node>  
+    </group>
+
+<!-- Note, this does run into:
+[ WARN] [1606969708.399580741]: [image_transport] Topics '/hullbot/front_cam/image_color' and '/hullbot/front_cam/camera_info' do not appear to be synchronized. In the last 10s:
+	Image messages received:      147
+	CameraInfo messages received: 250
+	Synchronized pairs:           0
+
+It's not ideal but using the republish_raw_and_rectify.launch which
+launches a republish node to do compressed -> raw works better (at a higher CPU usage cost)
+-->
+
+</launch>
